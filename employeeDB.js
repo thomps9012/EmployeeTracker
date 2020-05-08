@@ -188,7 +188,7 @@ function updateEmployee() {
       },
       {
         role_id: '  '
-      }
+      },
       {
         manager_id: '  '
       }
