@@ -17,10 +17,12 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  //insert function below here//
   createDepartment();
   createEmployee();
   createRole();
+  readDepartments();
+  readEmployees();
+  readRoles();
 });
 
 function createDepartment() {
@@ -34,12 +36,10 @@ function createDepartment() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " department inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
       updateDepartment();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -58,12 +58,10 @@ function updateDepartment() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " department updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
       deleteDepartment();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -77,7 +75,6 @@ function deleteDepartment() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " department deleted!\n");
-      // Call readProducts AFTER the DELETE completes
     }
   );
 }
@@ -95,12 +92,10 @@ function createRole() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " role inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
       updateRole();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -125,12 +120,10 @@ function updateRole() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " role updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
       deleteRole();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -144,7 +137,6 @@ function deleteRole() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " role deleted!\n");
-      // Call readProducts AFTER the DELETE completes
     }
   );
 }
@@ -163,12 +155,10 @@ function createEmployee() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " employee inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
       updateEmployee();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -196,12 +186,10 @@ function updateEmployee() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " employee updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
       deleteEmployee();
     }
   );
 
-  // logs the actual query being run
   console.log(query.sql);
 }
 
@@ -215,7 +203,96 @@ function deleteEmployee() {
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " employee deleted!\n");
-      // Call readProducts AFTER the DELETE completes
     }
   );
+}
+
+function readDepartments(){
+  console.log("Selecting all departments...\n");
+  connection.query("SELECT * FROM department", function(err, res){
+    if (err) throw err;
+    console.log(res);
+    connection.end();
+  });
+}
+
+function readEmployees(){
+  console.log("Selecting all employees...\n");
+  connection.query("SELECT * FROM employee", function(err, res){
+    if (err) throw err;
+    console.log(res);
+    connection.end();
+  });
+}
+
+function readRoles(){
+  console.log("Selecting all roles...\n");
+  connection.query("SELECT * FROM role", function(err, res){
+    if (err) throw err;
+    console.log(res);
+    connection.end();
+  });
+}
+
+connection.connect(function(err) {
+  if (err) throw err;
+  runSearch();
+});
+
+function runSearch() {
+  inquirer
+    .prompt({
+      name: "action",
+      type: "list",
+      message: "What would you like to do?",
+      choices: [
+        "View department's budget",
+        "Search for all employees by manager",
+        "exit"
+      ]
+    })
+    .then(function(answer) {
+      switch (answer.action) {
+      case "View department's budget":
+        budgetSearch();
+        break;
+
+      case "Search for all employees by manager":
+        searchEmployeeMgr();
+        break;
+
+      case "exit":
+        connection.end();
+        break;
+      }
+    });
+}
+function searchEmployeeMgr(){
+  inquirer
+    .prompt({
+      name: "Manager",
+      type: "input",
+      message: "Find all employees managed by?"
+    })
+    .then(function(answer) {
+      console.log(answer.manager_id);
+      connection.query("SELECT * FROM employee WHERE ?", { manager_id: answer.manager_id }, function(err, res) {
+        if (err) throw err;
+        console.log(
+          "First Name: " +
+            res[0].first_name +
+            " || Last Name: " +
+            res[0].last_name +
+            " || ID Number: " +
+            res[0].id +
+            " || Role ID: " +
+            res[0].role_id
+        );
+        runSearch();
+      });
+    });
+}
+
+function budgetSearch(){
+  
 }
