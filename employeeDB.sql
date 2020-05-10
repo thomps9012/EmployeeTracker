@@ -5,21 +5,24 @@ CREATE DATABASE employeeDB;
 USE employeeDB;
 
 CREATE TABLE department (
-    id INT PRIMARY KEY,
-    department_name VARCHAR(30) NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(45) NULL,
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE role (
-    id INT PRIMARY KEY,
-    title VARCHAR(30) NOT NULL,
-    salary DECIMAL(10,2) NOT NULL,
-    id PRIMARY KEY (department_id)
+  id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(45) NULL,
+  salary DECIMAL(10.3) NULL,
+  department_id INT NULL,
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE employee (
-    id INT PRIMARY KEY,
-    first_name VARCHAR(30) NOT NULL,
-    last_name VARCHAR(30) NOT NULL,
-    role_id INT PRIMARY KEY(role_id),
-    manager_id INT PRIMARY KEY (manager_id) NULL
+  id INT NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(45) NULL,
+  last_name VARCHAR(45) NULL,
+  role_id INT NULL,
+  manager_id INT NULL,
+  PRIMARY KEY (id)
 );
